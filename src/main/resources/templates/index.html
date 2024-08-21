@@ -1,0 +1,540 @@
+<!DOCTYPE html> 
+<html xmlns:th="http://www.thymeleaf.org"> 
+
+<head> 
+	<meta charset="UTF-8"> 
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"> 
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css"> 
+	<link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/512/7656/7656409.png"> 
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
+	<title>Inventory Management System</title> 
+</head> 
+
+<style> 
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@1,800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+body {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    overflow-x: hidden;
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+.navbar-brand {
+    font-family: 'Noto Serif', serif;
+    margin-left: 1rem;
+    color: white !important;
+    font-weight: 800;
+    font-size: 1.75rem;
+}
+
+.navbar {
+    background-color: #002366 !important; /* Navy Blue */
+}
+
+.nav-link {
+    font-weight: 500;
+    font-size: 16px !important;
+    color: #ffffff;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.nav-link:active,
+.nav-link.active {
+    background-color: #34495e !important; /* Darker shade of navy */
+    color: white !important;
+    border-radius: 5px;
+}
+
+.nav-link:hover {
+    color: white !important;
+    background-color: #1f3a93 !important; /* Medium Navy */
+    border-radius: 5px;
+}
+
+.content {
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin: 20px;
+}
+
+::placeholder {
+    font-size: 14px;
+    font-weight: 400;
+    font-family: 'Roboto', sans-serif;
+    color: #999;
+}
+
+td {
+    font-size: 14px;
+    color: #555;
+}
+
+label {
+    font-family: 'Noto Serif', serif;
+    font-weight: 700;
+    color: #333;
+}
+
+input,
+select,
+textarea {
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    transition: border-color 0.3s;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: #2980b9; /* Steel blue */
+    outline: none;
+    box-shadow: 0 0 5px rgba(41, 128, 185, 0.3);
+}
+
+button {
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-weight: 700;
+    transition: background-color 0.3s, box-shadow 0.3s;
+    background-color: #2980b9; /* Steel blue */
+    color: white;
+    border: none;
+}
+
+button:hover {
+    background-color: #1f3a93; /* Medium Navy */
+    box-shadow: 0 2px 10px rgba(31, 58, 147, 0.3);
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f0f8ff;
+}
+
+.alert {
+    border-radius: 8px;
+}
+
+.navbar-light .navbar-toggler {
+    border: none;
+}
+
+</style> 
+
+<body> 
+
+	<nav class="navbar navbar-expand-md navbar-light bg-success"> 
+		<div class="container-fluid"> 
+			<a class="navbar-brand" href="#"><i class="fa fa-align-center" aria-hidden="true"></i> Inventory Management</a> 
+			<a class="btn btn-light" th:href="@{/logout}">Logout</a>
+		</div> 
+	</nav> 
+
+	<div class="container-fluid"> 
+		<div class="row"> 
+			<div class="col-md-2 bg-light"> 
+				<div class="bg-light min-vh-100"> 
+					<div class="sidebar-sticky"> 
+						<ul class="nav flex-column nav-pills"> 
+							<li class="nav-item p-2"> 
+								<a class="nav-link text-success mt-5" data-bs-toggle="pill" href="#home"><i
+										class="fa fa-home"></i>Home</a> 
+							</li> 
+							<li class="nav-item p-2"> 
+								<a class="nav-link text-success mt-2" data-bs-toggle="pill" href="#products"><i
+										class="fa fa-database"></i>Products</a> 
+							</li> 
+							<li class="nav-item p-2"> 
+								<a class="nav-link text-success mt-2" data-bs-toggle="pill" href="#addProduct"><i
+										class="fa fa-plus"></i>Add Product</a> 
+							</li> 
+							<li class="nav-item p-2"> 
+								<a class="nav-link text-success mt-2" data-bs-toggle="pill" href="#searchProduct"><i
+										class="fa fa-search"></i>Search Product</a> 
+							</li> 
+							<li class="nav-item p-2"> 
+								<a class="nav-link text-success mt-2" data-bs-toggle="pill" href="#removeProduct"><i
+										class="fa fa-trash"></i>Remove Product</a> 
+							</li> 
+
+						</ul> 
+					</div> 
+				</div> 
+			</div> 
+
+			<div class="col-md-10"> 
+				<div class="content tab-content"> 
+					<div class="tab-pane fade show active" id="home"> 
+						<h5 class="text-left text-success p-3">Welcome to the Inventory Management System ( Report ) 
+							</h4> 
+							<br> 
+							<div class="row p-2"> 
+								<div class="col-sm-6"> 
+									<p class="p-2 text-left">Maximum Number of Products & Their Category 
+									</p> 
+									<div style="margin: auto;"> 
+										<canvas id="maxproductChart"></canvas> 
+									</div> 
+									<script th:inline="javascript"> 
+										var products = /*[[${products}]]*/[]; 
+
+										var data = {}; 
+										products.forEach(function (product) { 
+											var key = product.productName; 
+											data[key] = (data[key] || 0) + product.maximumProducts; 
+										}); 
+
+										var labels = Object.keys(data); 
+										var values = Object.values(data); 
+
+										// Generate an array of dynamic colors 
+										var dynamicColors = []; 
+										for (var i = 0; i < labels.length; i++) { 
+											var r = Math.floor(Math.random() * 255); 
+											var g = Math.floor(Math.random() * 255); 
+											var b = Math.floor(Math.random() * 255); 
+											dynamicColors.push('rgba(' + r + ',' + g + ',' + b + ', 0.6)'); 
+										} 
+
+										var ctx = document.getElementById('maxproductChart').getContext('2d'); 
+										var productChart = new Chart(ctx, { 
+											type: 'bar', 
+											data: { 
+												labels: labels, 
+												datasets: [{ 
+													label: 'Maximum Products Count', 
+													data: values, 
+													backgroundColor: dynamicColors, 
+													borderColor: dynamicColors.map(color => color.replace(', 0.6)', ', 1)')), 
+													borderWidth: 2 
+												}] 
+											}, 
+											options: { 
+												scales: { 
+													x: { 
+														title: { 
+															display: true, 
+															text: 'Product Name' 
+														} 
+													}, 
+													y: { 
+														beginAtZero: true, 
+														title: { 
+															display: true, 
+															text: 'Maximum number of Products' 
+														} 
+													} 
+												} 
+											} 
+										}); 
+									</script> 
+								</div> 
+								<div class="col-sm-6"> 
+									<p class="p-2 text-left">Minimum Number of Products & Their Category 
+									</p> 
+									<div style="margin: auto;"> 
+										<canvas id="minproductChart"></canvas> 
+									</div> 
+									<script th:inline="javascript"> 
+										var products = /*[[${products}]]*/[]; 
+
+										var data = {}; 
+										products.forEach(function (product) { 
+											var key = product.productName; 
+											data[key] = (data[key] || 0) + product.minimumProducts; 
+										}); 
+
+										var labels = Object.keys(data); 
+										var values = Object.values(data); 
+
+										// Generate an array of dynamic colors 
+										var dynamicColors = []; 
+										for (var i = 0; i < labels.length; i++) { 
+											var r = Math.floor(Math.random() * 255); 
+											var g = Math.floor(Math.random() * 255); 
+											var b = Math.floor(Math.random() * 255); 
+											dynamicColors.push('rgba(' + r + ',' + g + ',' + b + ', 0.6)'); 
+										} 
+
+										var ctx = document.getElementById('minproductChart').getContext('2d'); 
+										var productChart = new Chart(ctx, { 
+											type: 'bar', 
+											data: { 
+												labels: labels, 
+												datasets: [{ 
+													label: 'Minimum Products Count', 
+													data: values, 
+													backgroundColor: dynamicColors, 
+													borderColor: dynamicColors.map(color => color.replace(', 0.6)', ', 1)')), 
+													borderWidth: 2 
+												}] 
+											}, 
+											options: { 
+												scales: { 
+													x: { 
+														title: { 
+															display: true, 
+															text: 'Product Name' 
+														} 
+													}, 
+													y: { 
+														beginAtZero: true, 
+														title: { 
+															display: true, 
+															text: 'Minimum number of Products' 
+														} 
+													} 
+												} 
+											} 
+										}); 
+									</script> 
+								</div> 
+							</div> 
+					</div> 
+					<div class="tab-pane fade" id="products"> 
+						<h4 class="text-success p-2">All Products Data</h4> 
+						<div class="table-responsive mt-5"> 
+							<table class="table table-hover table-bordered"> 
+								<thead class="bg-success text-light"> 
+									<th>SN</th> 
+									<th>ID</th> 
+									<th>Category</th> 
+									<th>Name</th> 
+									<th>Rating</th> 
+									<th>Quality</th> 
+									<th>Max Size</th> 
+									<th>Min Size</th> 
+									<th>User</th> 
+									<th>Email</th> 
+									<th>Phone</th> 
+								</thead> 
+								<tbody> 
+									<tr th:each="product, index : ${products}" }> 
+										<td th:text="${index.index + 1}"></td> 
+										<td th:text="${product.id}"></td> 
+										<td th:text="${product.productCategory}"></td> 
+										<td th:text="${product.productName}"></td> 
+										<td th:text="${product.rating}"></td> 
+										<td th:text="${product.quality}"></td> 
+										<td th:text="${product.maximumProducts}"></td> 
+										<td th:text="${product.minimumProducts}"></td> 
+										<td th:text="${product.userName}"></td> 
+										<td th:text="${product.emailAddress}"></td> 
+										<td th:text="${product.phoneNumber}"></td> 
+									</tr> 
+								</tbody> 
+							</table> 
+						</div> 
+					</div> 
+					<div class="tab-pane fade" id="addProduct"> 
+						<h4 class="text-success p-2">Add New Product</h4> 
+						<br> 
+						<div class="container"> 
+							<form class="p-1" th:action="@{/newProduct}" th:object="${product}" method="post"> 
+								<div class="row p-4 justify-content-center"> 
+									<div th:if="${insertSuccess}"> 
+										<div class="alert alert-success alert-dismissible fade show p-2 mt-1 mb-3"
+											role="alert"> 
+											<strong>Product Added successfully! 
+												<button type="button" class="btn-close" data-bs-dismiss="alert"
+													aria-label="Close"></button> 
+											</strong> 
+										</div> 
+									</div> 
+									<div class="col-sm-3 offset-sm-1 p-2"> 
+										<label>product Category</label> 
+										<select th:field="*{productCategory}" class="form-select mt-3" required> 
+											<option value=""></option> 
+											<option value="Electronics">Electronics</option> 
+											<option value="Fashion">Fashion</option> 
+											<option value="Furniture">Furniture</option> 
+											<option value="Home&Kitchen">Home & Kitchen</option> 
+											<option value="Grocery">Grocery</option> 
+										</select> 
+									</div> 
+									<div class="col-sm-3 offset-sm-1 p-2"> 
+										<label>product Name</label> 
+										<input type="text" th:field="*{productName}" class="form-control mt-3" required 
+											placeholder="name of the product"> 
+									</div> 
+									<div class="col-sm-3 offset-sm-1 p-2"> 
+										<label>product Rating</label> 
+										<select th:field="*{rating}" class="form-select mt-3" required> 
+											<option value=""></option> 
+											<option value="1">1</option> 
+											<option value="2">2</option> 
+											<option value="3">3</option> 
+											<option value="4">4</option> 
+											<option value="5">5</option> 
+										</select> 
+									</div> 
+								</div> 
+								<div class="row p-4 justify-content-center"> 
+									<div class="col-sm-3 offset-sm-1 p-2"> 
+										<label>product Quality</label> 
+										<select th:field="*{quality}" class="form-select mt-3" required> 
+											<option value=""></option> 
+											<option value="1">1</option> 
+											<option value="2">2</option> 
+											<option value="3">3</option> 
+											<option value="4">4</option> 
+											<option value="5">5</option> 
+										</select> 
+									</div> 
+									<div class="col-sm-3 offset-sm-1 p-2"> 
+										<label>Maximum Products</label> 
+										<input type="number" th:field="*{maximumProducts}" class="form-control mt-3"
+											required placeholder="maximum number of products"> 
+									</div> 
+									<div class="col-sm-3 offset-sm-1 p-2"> 
+										<label>Minimum Products</label> 
+										<input type="number" th:field="*{minimumProducts}" class="form-control mt-3"
+											required placeholder="minimum number of products"> 
+									</div> 
+								</div> 
+								<div class="row p-4 justify-content-center"> 
+									<div class="col-sm-3 offset-sm-1 p-2"> 
+										<label>Product Added By</label> 
+										<input type="text" th:field="*{userName}" class="form-control mt-3" required 
+											placeholder="user name"> 
+									</div> 
+									<div class="col-sm-3 offset-sm-1 p-2"> 
+										<label>User Email Address</label> 
+										<input type="email" th:field="*{emailAddress}" class="form-control mt-3"
+											required placeholder="user email address"> 
+									</div> 
+									<div class="col-sm-3 offset-sm-1 p-2"> 
+										<label>Phone Number</label> 
+										<input type="tel" th:field="*{phoneNumber}" class="form-control mt-3" required 
+											placeholder="phone number"> 
+									</div> 
+								</div> 
+								<br> 
+								<button type="submit" class="btn btn-success text-light" style="margin-left: 7rem;">Add 
+									Product</button> 
+							</form> 
+						</div> 
+
+					</div> 
+					<div class="tab-pane fade" id="searchProduct"> 
+						<h4 class="text-success p-2">Search Product Details</h4> 
+						<br> 
+						<div class="container p-1"> 
+							<form th:action="@{/searchProduct}" th:object="${product}" method="post" class="p-2"> 
+								<div class="row"> 
+									<div class="col-sm-9 offset-sm-1"> 
+										<input type="text" name="id" th:field="*{id}" class="form-control" required 
+											placeholder="Product ID"
+											style="text-align: center; border-radius: 30px; border: 2px solid green;"> 
+									</div> 
+
+									<div class="col-sm-2"> 
+										<button type="submit" class="btn btn-success"
+											style="border-radius: 20px;">Search Product</button> 
+									</div> 
+								</div> 
+								<br> 
+								<div th:if="${foundProduct}"> 
+									<div class="table-responsive mt-4"> 
+										<table class="table table-hover table-bordered"> 
+											<thead class="bg-success text-light"> 
+												<th>ID</th> 
+												<th>Category</th> 
+												<th>Name</th> 
+												<th>Rating</th> 
+												<th>Quality</th> 
+												<th>Max Size</th> 
+												<th>Min Size</th> 
+												<th>User</th> 
+												<th>Email</th> 
+												<th>Phone</th> 
+											</thead> 
+											<tbody> 
+												<tr> 
+													<td th:text="${foundProduct.get().id}"></td> 
+													<td th:text="${foundProduct.get().productCategory}"></td> 
+													<td th:text="${foundProduct.get().productName}"></td> 
+													<td th:text="${foundProduct.get().rating}"></td> 
+													<td th:text="${foundProduct.get().quality}"></td> 
+													<td th:text="${foundProduct.get().maximumProducts}"></td> 
+													<td th:text="${foundProduct.get().minimumProducts}"></td> 
+													<td th:text="${foundProduct.get().userName}"></td> 
+													<td th:text="${foundProduct.get().emailAddress}"></td> 
+													<td th:text="${foundProduct.get().phoneNumber}"></td> 
+												</tr> 
+											</tbody> 
+										</table> 
+									</div> 
+								</div> 
+
+								<div th:if="${notFound}" class="mt-3"> 
+									<div class="alert alert-warning alert-dismissible fade show" role="alert"> 
+										<strong>Product Details Not Found! 
+											<button type="button" class="btn-close" data-bs-dismiss="alert"
+												aria-label="Close"></button> 
+									</div> 
+								</div> 
+							</form> 
+						</div> 
+					</div> 
+					<div class="tab-pane fade" id="removeProduct"> 
+						<h4 class="text-success p-2">Remove Existing Product</h4> 
+						<br> 
+						<div class="container p-1"> 
+							<form th:action="@{/deleteProduct}" method="post" class="p-2"> 
+								<div class="row"> 
+									<div class="col-sm-9 offset-sm-1"> 
+										<input type="text" name="id" class="form-control" required 
+											placeholder="Product ID"
+											style="text-align: center; border-radius: 30px; border: 2px solid green;"> 
+									</div> 
+									<div class="col-sm-2"> 
+										<button type="submit" class="btn btn-success"
+											style="border-radius: 20px;">Delete Product</button> 
+									</div> 
+								</div> 
+								<br> 
+								<div th:if="${deleteSuccess}"> 
+									<div class="alert alert-success alert-dismissible fade show" role="alert"> 
+										<strong>Product deleted successfully! 
+											<button type="button" class="btn-close" data-bs-dismiss="alert"
+												aria-label="Close"></button> 
+									</div> 
+								</div> 
+
+								<div th:if="${notFound}"> 
+									<div class="alert alert-warning alert-dismissible fade show" role="alert"> 
+										<strong>Product not found. Please check the ID and try again. 
+											<button type="button" class="btn-close" data-bs-dismiss="alert"
+												aria-label="Close"></button> 
+									</div> 
+								</div> 
+							</form> 
+						</div> 
+					</div> 
+				</div> 
+			</div> 
+		</div> 
+	</div> 
+
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script> 
+	    <footer style="background-color: #2d3748; color: #ffffff; margin-top: auto; padding: 24px; text-align: center;">
+        <div style="max-width: 1200px; margin: 0 auto;">
+            <p style="font-size: 14px;">Made with ❤️ by Aryesh Shivmare</p>
+        </div>
+    </footer>
+</body> 
+
+
+</html>
