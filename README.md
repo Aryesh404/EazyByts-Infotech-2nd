@@ -23,4 +23,4 @@ Manage your business inventory efficiently with this web application.
 
 ![image](https://github.com/user-attachments/assets/36cad97a-5117-4d3b-8ecf-4420a730377c)
 
-![image](https://github.com/user-attachments/assets/4787e19b-090a-4238-9edf-3503f3401975)
+![image](https://github.com/user-attachments/assets/c8472dd4-4b29-481e-b144-18178f2ee373)
